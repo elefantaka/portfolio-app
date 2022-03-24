@@ -1,16 +1,15 @@
-# portfolio
+# Portfolio
 
-Portfolio app.
+The Flutter app shows the portfolio.
 
-## Getting Started
+## Features:
 
-This project is a starting point for a Flutter application.
+- wavy animation for texts: 'Kite' and 'Pływanie',
+- bolding the text 'Renata Wietrzyńska',
+- displaying a big image dialog,
+- changing the shade of the background color of the motivation text.
 
-A few resources to get you started if this is your first Flutter project:
+## How to use?
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Tap on the 'Renata Wietrzyńska' to bold the font. Make image bigger long pressing on the image. 
+To change the shade of the background color, tap on motivation text.

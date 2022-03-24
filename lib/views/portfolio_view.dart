@@ -1,4 +1,7 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio/utils/strings.dart';
+import 'package:portfolio/views/displayed_image_view.dart';
 
 class PortfolioView extends StatefulWidget {
   final double sizeOK;
@@ -10,158 +13,201 @@ class PortfolioView extends StatefulWidget {
 }
 
 class _PortfolioViewState extends State<PortfolioView> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  late OverlayEntry _popupDialog;
+  bool _boldFont = false;
+  bool _changeBackgroundColor = true;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.sizeOK,
-      height: widget.sizeOK,
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width,
-        maxHeight: MediaQuery.of(context).size.height,
-      ),
-      child: Column(
-        children: [
-          Flexible(
-            child: Row(
-              children: [
-                Flexible(
-                  child: _buildPhoto(),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: _buildName(),
-                ),
-              ],
-            ),
+    Orientation orientation = MediaQuery.of(context).orientation;
+
+    return Scaffold(
+      backgroundColor: Colors.indigo[600],
+      body: Center(
+        child: Container(
+          width: widget.sizeOK,
+          height: widget.sizeOK,
+          constraints: BoxConstraints(
+            maxWidth: orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height,
+            maxHeight: orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height,
           ),
-          Flexible(
-            flex: 2,
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  child: _buildMotivationDescription(),
+          child: Column(
+            children: <Widget>[
+              Flexible(
+                flex: 1,
+                child: Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: _buildImage(context, Strings.idImagePath),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: _buildNameText(),
+                    ),
+                  ],
                 ),
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Flexible(
-                        child: Row(
-                          children: <Widget>[
-                            Flexible(
-                              child: _buildKiteWord(),
+              ),
+              Flexible(
+                flex: 2,
+                child: Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: _buildExpectationText(),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Column(
+                        children: <Widget>[
+                          Flexible(
+                            child: Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: _buildWavyText(Strings.kiteText),
+                                ),
+                                Flexible(
+                                  child: _buildImage(context, Strings.kiteImagePath),
+                                ),
+                              ],
                             ),
-                            Flexible(
-                              child: _buildKitePhoto(),
+                          ),
+                          Flexible(
+                            child: Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: _buildImage(context, Strings.swimmingImagePath),
+                                ),
+                                Flexible(
+                                  child: _buildWavyText(Strings.swimmingText),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Flexible(
-                        child: Row(
-                          children: <Widget>[
-                            Flexible(
-                              child: _buildSwimWord(),
-                            ),
-                            Flexible(
-                              child: _buildSwimPhoto(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-}
 
-Widget _buildPhoto() {
-  return Container(
-    decoration: const BoxDecoration(
-      image: DecorationImage(image: AssetImage('assets/photos/idPhoto.jpg'), fit: BoxFit.fill),
-    ),
-  );
-}
-
-Widget _buildName() {
-  return Container(
-    color: Colors.yellow,
-    child: const Center(
-      child: Text(
-        'Name',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  Widget _buildImage(BuildContext context, String path) {
+    return GestureDetector(
+      onLongPress: () {
+        _popupDialog = _createPopupImage(
+          context,
+          path,
+        );
+        Overlay.of(context)?.insert(_popupDialog);
+      },
+      onLongPressEnd: (LongPressEndDetails details) => _popupDialog.remove(),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage(path), fit: BoxFit.fill),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildMotivationDescription() {
-  return Container(
-    color: Colors.pink,
-    child: const Center(
-      child: Text(
-        'Motivation',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  OverlayEntry _createPopupImage(BuildContext context, String path) {
+    return OverlayEntry(
+      builder: (BuildContext context) => DisplayedImage(
+        child: _createPopupImageContent(context, path),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildKiteWord() {
-  return Container(
-    color: Colors.orange,
-    child: const Center(
-      child: Text(
-        'Kite',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  Widget _createPopupImageContent(BuildContext context, String path) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height,
+        maxHeight: orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height,
       ),
-    ),
-  );
-}
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Image(
+          image: AssetImage(path),
+          fit: BoxFit.fill,
+        ),
+      ),
+    );
+  }
 
-Widget _buildKitePhoto() {
-  return Container(
-    color: Colors.cyan,
-    child: const Center(
-      child: Text(
-        'Kite photo',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  Widget _buildNameText() {
+    return InkWell(
+      onTap: () {
+        setState(
+          () {
+            _boldFont = !_boldFont;
+          },
+        );
+      },
+      child: Container(
+        color: Colors.indigo[900],
+        child: Center(
+          child: Text(
+            Strings.nameText,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.indigo[50], fontSize: 20, fontWeight: _boldFont == true ? FontWeight.w900 : FontWeight.w400),
+          ),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildSwimWord() {
-  return Container(
-    color: Colors.green,
-    child: const Center(
-      child: Text(
-        'Swimming',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  Widget _buildExpectationText() {
+    return InkWell(
+      onTap: () {
+        setState(
+          () {
+            _changeBackgroundColor = !_changeBackgroundColor;
+          },
+        );
+      },
+      child: Container(
+        color: _changeBackgroundColor == true ? Colors.indigo[900] : Colors.indigo[800],
+        child: Center(
+          child: Text(
+            Strings.expectationText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.indigo[50],
+              fontSize: 16,
+            ),
+          ),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildSwimPhoto() {
-  return Container(
-    color: Colors.black,
-    child: const Center(
-      child: Text(
-        'Swimming photo',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+  Widget _buildWavyText(String string) {
+    return Container(
+      color: Colors.indigo[400],
+      child: Center(
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: Colors.indigo[50],
+            fontSize: 18,
+          ),
+          child: AnimatedTextKit(
+            animatedTexts: <WavyAnimatedText>[
+              WavyAnimatedText(
+                string,
+                textAlign: TextAlign.center,
+                speed: const Duration(milliseconds: 300),
+              ),
+            ],
+            totalRepeatCount: 1,
+            isRepeatingAnimation: true,
+            repeatForever: false,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
